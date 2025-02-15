@@ -69,6 +69,17 @@ class OrderCreateResponse(OrderBase):
     class Config:
         from_attributes = True
 
+class GetOrderResponse(BaseModel):
+    order_id: int
+    customer_name: str
+    delivery_date: str
+    created_at: datetime
+    is_urgent: bool 
+    extra_info: str
+    total_quantity: int
+    total_price: int
+    order_status: bool
+
 # class ItemTypeBase(BaseModel):
 #     name: str
 

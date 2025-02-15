@@ -8,7 +8,6 @@ from sqlalchemy.orm import joinedload
 
 router = APIRouter(prefix ="/order", tags=["ORDERS"])
 
-
 @router.post("/createorder", response_model= schemas.OrderCreateResponse)
 def create_order(order:schemas.OrderCreate, db: Session=Depends(get_db),):
     # Create Order object from the provided data
@@ -44,3 +43,18 @@ def create_order(order:schemas.OrderCreate, db: Session=Depends(get_db),):
     db.refresh(db_order)
     
     return db_order
+
+@router.get("/getorder", response_model=List[schemas.GetOrderResponse])
+def get_order(db:Session= Depends(get_db),limit:int=3, offset:int=0):
+    result = db.query(
+        models.Order.id.label("order_id"),
+        models.Order.customer_name,
+        models.Order.delivery_date,
+        models.Order.created_at,
+        models.Order.is_urgent,
+        models.Order.extra_info,
+        models.Order.total_quantity,
+        models.Order.total_price,   
+        models.Order.order_status
+    ).order_by(models.Order.created_at.desc()).limit(limit).offset(offset).all()
+    return result
