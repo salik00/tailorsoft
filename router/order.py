@@ -1,10 +1,9 @@
 from fastapi import FastAPI, HTTPException, APIRouter, Depends
 from sqlalchemy.orm import Session
 from typing import List
-import models,schemas,database
+import models,schemas
 from database import get_db
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.orm import joinedload
 
 router = APIRouter(prefix ="/order", tags=["ORDERS"])
 
@@ -41,7 +40,7 @@ def create_order(order:schemas.OrderCreate, db: Session=Depends(get_db),):
     db.add(db_order)
     db.commit()
     db.refresh(db_order)
-    
+
     return db_order
 
 @router.get("/getorder", response_model=List[schemas.GetOrderResponse])
