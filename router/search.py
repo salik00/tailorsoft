@@ -28,7 +28,7 @@ def search_orders(query: str, db:Session = Depends(get_db),
     
     if not results:
         raise HTTPException(status_code=status.HTTP_204_NO_CONTENT,
-                            detail=f"Not found any content related to this..")
+                            detail=f"Not found any content related to this...")
     print("querying:", search_query)
     print("rsults:", results)    
     return results

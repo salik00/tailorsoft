@@ -42,8 +42,8 @@ class OrderItem(Base):
     item_name = Column(String, index=True)
     quantity = Column(Integer)
     price = Column(Integer)
-    measurement = Column(JSON, nullable=True)
-    design = Column(JSON, nullable=True)
+    # measurement = Column(JSON, nullable=True)
+    # design = Column(JSON, nullable=True)
     extra_info = Column(String, nullable=True)
     
     order = relationship("Order", back_populates="items")

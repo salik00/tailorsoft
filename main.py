@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from router import auth,user,order,search
 import models
 from database import engine
+from config import settings 
 
 app = FastAPI()
 
