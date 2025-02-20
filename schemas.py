@@ -34,8 +34,6 @@ class ItemCreate(BaseModel):
     item_name: str
     quantity: int
     price: int
-    measurement: Optional[Dict[str, int]] = None
-    design: Optional[Dict[str, str]] = None
     extra_info: Optional[str] = None
 
 class ItemCreateResponse(ItemCreate):
@@ -47,14 +45,11 @@ class ItemCreateResponse(ItemCreate):
 class OrderBase(BaseModel):
     customer_name: str
     contact_no: str
-    address: str
+    created_at: str
     delivery_date: str
-    is_urgent: bool = False
-    extra_info: Optional[str]
-    order_status: bool = False
-    # total_quantity: Optional[int]
-    # total_price: Optional[int]
+    order_status: str 
     items: List[ItemCreate]
+
 
 class OrderCreate(OrderBase):
     pass
@@ -63,8 +58,8 @@ class OrderCreateResponse(OrderBase):
     id: int
     total_quantity: int
     total_price: int
+    image_path: Optional[str]
     items: List[ItemCreateResponse]
-    # order_items: List[OrderItemResponse]
     
     class Config:
         from_attributes = True
@@ -74,77 +69,8 @@ class GetOrderResponse(BaseModel):
     customer_name: str
     delivery_date: str
     created_at: datetime
-    is_urgent: bool 
-    extra_info: str
     total_quantity: int
     total_price: int
-    order_status: bool
-
-# class ItemTypeBase(BaseModel):
-#     name: str
-
-# class ItemTypeCreate(ItemTypeBase):
-#     pass
-
-# class ItemTypeResponse(ItemTypeBase):
-#     id: int
-#     class Config:
-#         from_attributes = True 
-
-#-----------------------
-#  measurementschema
-#----------------------
-# class MeasurementBase(BaseModel):
-#     order_item_id: int
-#     item_type_id: int
-    
-#     #shirt measurement
-#     shirt_collar: Optional[str] = None
-#     shirt_sleeve: Optional[str] = None
-#     shirt_height: Optional[str] = None
-#     #pant measurement
-#     pant_mohri: Optional[str] = None
-#     pant_hip: Optional[str] = None
-#     pant_waist: Optional[str] = None
-#      #coat measurement
-#     coat_collar: Optional[str] = None
-#     coat_sleeve: Optional[str] = None
-#     coat_waist: Optional[str] = None
-
-# class MeasurementCreate(MeasurementBase):
-#     pass
-
-# class MeasurementResponse(MeasurementBase):
-#     id: int 
-#     class Config:
-#         from_attributes = True
-
-# #---------------------
-# #   DESIGN SCHEMA
-# #---------------------
-# class DesignBase(BaseModel):
-#     order_item_id: int
-#     item_type_id: int
-    
-#     #shirt measurement
-#     plate: Optional[str] = None
-#     round: Optional[str] = None
-#     #pant design
-#     loosefit: Optional[str] = None
-#     slimfit: Optional[str] = None
-#      #coat measurement
-#     british: Optional[str] = None
-#     american: Optional[str] = None
-
-# class DesignCreate(DesignBase):
-#     pass
-
-# class DesignResponse(DesignBase):
-#     id: int
-#     class Config:
-#         from_attributes = True
-
-# # ----------- ORDER SCHEMAS----------
-
+    order_status: str
 
 

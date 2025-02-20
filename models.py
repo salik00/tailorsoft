@@ -16,17 +16,20 @@ class User(Base):
 class Order(Base):
     __tablename__ = 'order'
     id = Column(Integer, primary_key=True, nullable=False)
+    created_at = Column(String, nullable=False)
+    bill_no = Column(Integer, nullable=True)
+    delivery_date = Column(String, nullable=False)
     customer_name = Column(String, nullable=False)
     contact_no = Column(String, nullable=False)
-    address = Column(String, nullable=False)
-    delivery_date = Column(String, nullable=False)
-    is_urgent = Column(Boolean, default=False)
-    extra_info = Column(Text, nullable=True)
+    # address = Column(String, nullable=False)
+    # is_urgent = Column(Boolean, default=False)
+    # extra_info = Column(Text, nullable=True)
+    order_status = Column(String, default=False)
     total_price = Column(Integer, nullable=False)
     total_quantity = Column(Integer,nullable=False)
-    order_status = Column(Boolean, default=False)
-    created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
+    # created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
     search_vector = Column(TSVECTOR)
+    image_path = Column(String, nullable=True)
     items = relationship("OrderItem", back_populates="order")
    
     __table_args__ = (
@@ -44,6 +47,6 @@ class OrderItem(Base):
     price = Column(Integer)
     # measurement = Column(JSON, nullable=True)
     # design = Column(JSON, nullable=True)
-    extra_info = Column(String, nullable=True)
+    # extra_info = Column(String, nullable=True)
     
     order = relationship("Order", back_populates="items")
