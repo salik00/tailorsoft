@@ -1,0 +1,343 @@
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { addOrder, updateOrder, setOrders } from "../features/orderSlice";
+
+const CreateOrder = () => {
+  const dispatch = useDispatch();
+  const orders = useSelector((state) => state.orders.orders);
+
+  // UseState to store the form data
+  const [orderData, setOrderData] = useState({
+    created_at: new Date().toISOString().split("T")[0],
+    delivery_date: "",
+    customer_name: "",
+    contact_no: "",
+    items: [
+      {
+        name: "",
+        quantity: 1,
+        price: 0,
+      },
+    ],
+    order_status: "Booked",
+    bill_no: "", 
+    // image_path: null,
+  });
+
+  // Handle changes for general order form data
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setOrderData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  // Handle changes for each order item
+  const handleOrderItemsChange = (e, index) => {
+    const { name, value } = e.target;
+    const updatedOrderItems = [...orderData.items];
+    updatedOrderItems[index] = {
+      ...updatedOrderItems[index],
+      [name]: value,
+    };
+    setOrderData((prevData) => ({
+      ...prevData,
+      items: updatedOrderItems,
+    }));
+  };
+
+  // Add new order item to the list
+  const handleAddItem = () => {
+    const newItem = {
+      name: "",
+      quantity: 1,
+      price: 0,
+    };
+    setOrderData((prevData) => ({
+      ...prevData,
+      items: [...prevData.items, newItem],
+    }));
+  };
+
+  const handleOrderSubmit = async (e) => {
+    e.preventDefault();
+
+    // const formData = new FormData();
+    // formData.append("order", JSON.stringify({
+    // created_at: orderData.created_at,
+    // delivery_date: orderData.delivery_date,
+    // customer_name: orderData.customer_name,
+    // contact_no: orderData.contact_no,
+    // items: orderData.items,
+    // order_status: orderData.order_status,
+    // bill_no: orderData.bill_no, 
+    // image_path: "", // Empty if no file
+    // }))
+
+    // formData.append("items", JSON.stringify(orderData.items));
+
+    // if(file){
+    //   formData.append("image_path", file); 
+    // }
+
+    try {
+      const response = await fetch("http://127.0.0.1:8000/order/createorder", {
+        method: "POST",
+        // body: formData,
+        body: JSON.stringify(orderData),
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to submit order");
+      }
+  
+      const data = await response.json();
+      console.log("Order submitted successfully:", data);
+      dispatch(addOrder(data));
+  
+      handleResetForm();
+    } catch (error) {
+      console.error("Error submitting order:", error);
+    }
+  };
+
+ 
+  // Reset form after submission
+  const handleResetForm = () => {
+    setOrderData({
+    created_at: new Date().toISOString().split("T")[0],
+    delivery_date: "",
+    customer_name: "",
+    contact_no: "",
+    items: [
+      {
+        name: "",
+        quantity: 1,
+        price: 0,
+      },
+    ],
+    order_status: "Booked",
+    bill_no: "", 
+    // image_path: "",
+    });
+  };
+
+  return (
+    <div className="max-w-3xl mx-auto p-6 bg-white shadow-md rounded-lg">
+      <form onSubmit={handleOrderSubmit}>
+        {/* Order Date */}
+        <div className="mb-4">
+          <label
+            htmlFor="orderDate"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Order Date:
+          </label>
+          <input
+            type="date"
+            name="created_at"
+            value={orderData.created_at}
+            onChange={handleInputChange}
+            disabled
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+          />
+        </div>
+
+        {/* Delivery Date */}
+        <div className="mb-4">
+          <label
+            htmlFor="deliveryDate"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Delivery Date:
+          </label>
+          <input
+            type="date"
+            name="delivery_date"
+            value={orderData.delivery_date}
+            onChange={handleInputChange}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+          />
+        </div>
+
+        {/* Customer Name */}
+        <div className="mb-4">
+          <label
+            htmlFor="customerName"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Customer Name:
+          </label>
+          <input
+            type="text"
+            name="customer_name"
+            value={orderData.customer_name}
+            onChange={handleInputChange}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+          />
+        </div>
+
+        {/* Phone Number */}
+        <div className="mb-4">
+          <label
+            htmlFor="phoneNumber"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Phone Number:
+          </label>
+          <input
+            type="tel"
+            name="contact_no"
+            value={orderData.contact_no}
+            onChange={handleInputChange}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+          />
+        </div>
+
+        {/* Order Items */}
+        <div className="mb-4">
+          <h3 className="text-lg font-semibold text-gray-700 mb-3">
+            Order Items:
+          </h3>
+          {orderData.items.map((item, index) => (
+            <div key={index} className="mb-4 border p-4 rounded-lg">
+              <div className="grid grid-cols-2 gap-4">
+                {/* Item Name */}
+                <div>
+                  <label
+                    htmlFor={`itemName-${index}`}
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Item Name:
+                  </label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={item.name}
+                    onChange={(e) => handleOrderItemsChange(e, index)}
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+                  />
+                </div>
+
+                {/* Item Quantity */}
+                <div>
+                  <label
+                    htmlFor={`itemQuantity-${index}`}
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Item Quantity:
+                  </label>
+                  <input
+                    type="number"
+                    name="quantity"
+                    value={item.quantity}
+                    onChange={(e) => handleOrderItemsChange(e, index)}
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+                    min="1"
+                  />
+                </div>
+
+                {/* Item Price */}
+                <div>
+                  <label
+                    htmlFor={`itemPrice-${index}`}
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Item Price:
+                  </label>
+                  <input
+                    type="number"
+                    name="price"
+                    value={item.price}
+                    onChange={(e) => handleOrderItemsChange(e, index)}
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+                    min="0"
+                  />
+                </div>
+              </div>
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={handleAddItem}
+            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md shadow-sm hover:bg-blue-600"
+          >
+            Add Item
+          </button>
+        </div>
+
+        {/* Order Status */}
+        <div className="mb-4">
+          <label
+            htmlFor="orderStatus"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Order Status:
+          </label>
+          <select
+            name="order_status"
+            value={orderData.order_status}
+            onChange={handleInputChange}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+          >
+            <option value="Booked">Booked</option>
+            <option value="Cut">Cut</option>
+            <option value="Ready">Ready</option>
+            <option value="Delivered">Delivered</option>
+          </select>
+        </div>
+
+        {/* Order Bill Number */}
+        <div className="mb-4">
+          <label
+            htmlFor="orderBillNumber"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Order Bill Number:
+          </label>
+          <input
+            type="text"
+            name="bill_no"
+            value={orderData.bill_no}
+            onChange={handleInputChange}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+          />
+        </div>
+
+        {/* Measurement Picture */}
+        {/* <div className="mb-4">
+          <label
+            htmlFor="measurementPicture"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Measurement Picture:
+          </label>
+          <input
+            type="file"
+            name="image_path"
+            onChange={(e) => {
+              if (e.target.files.length > 0) {
+                setOrderData((prevData) => ({
+                  ...prevData,
+                  image_path: e.target.files[0],
+                }));
+              }
+            }}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+          />
+        </div> */}
+
+        {/* Submit Order Button */}
+        <button
+          type="submit"
+          className="w-full px-4 py-2 bg-green-500 text-white rounded-md shadow-sm hover:bg-green-600"
+        >
+          Submit Order
+        </button>
+      </form>
+    </div>
+  );
+};
+
+export default CreateOrder;
