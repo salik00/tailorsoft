@@ -16,9 +16,9 @@ class User(Base):
 class Order(Base):
     __tablename__ = 'order'
     id = Column(Integer, primary_key=True, nullable=False)
-    created_at = Column(String, nullable=False)
-    bill_no = Column(Integer, nullable=True)
-    delivery_date = Column(String, nullable=False)
+    created_at = Column(TIMESTAMP(timezone=True), nullable=False)
+    bill_no = Column(Integer, nullable=False)
+    delivery_date = Column(TIMESTAMP(timezone=True), nullable=False)
     customer_name = Column(String, nullable=False)
     contact_no = Column(String, nullable=False)
     # address = Column(String, nullable=False)

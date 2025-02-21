@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Optional
 from datetime import datetime
 from typing import List, Dict
@@ -31,7 +31,8 @@ class UserToken(BaseModel):
     token_type: str
     
 class ItemCreate(BaseModel):
-    item_name: str
+    item_name: str 
+    # = Field(alias="name")
     quantity: int
     price: int
     extra_info: Optional[str] = None
@@ -45,9 +46,10 @@ class ItemCreateResponse(ItemCreate):
 class OrderBase(BaseModel):
     customer_name: str
     contact_no: str
-    created_at: str
-    delivery_date: str
+    created_at: datetime
+    delivery_date: datetime
     order_status: str 
+    bill_no: int
     items: List[ItemCreate]
 
 

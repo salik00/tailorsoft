@@ -19,8 +19,6 @@ def search_orders(query: str, db:Session = Depends(get_db),
         models.Order.customer_name,
         models.Order.delivery_date,
         models.Order.created_at,
-        models.Order.is_urgent,
-        models.Order.extra_info,
         models.Order.total_quantity,
         models.Order.total_price,
         models.Order.order_status
